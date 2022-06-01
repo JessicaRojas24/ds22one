@@ -10,3 +10,73 @@
  * 
  * write it and make sure it runs
  */
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.children = [];
+  }
+
+  toString() {
+    let str = `${this.data} => `;
+    this.children.forEach((child) => {
+      str += child.data + " ";
+    });
+    return str;
+  }
+}
+
+class Tree {
+  constructor() {
+    this.root = null;
+  }
+
+  add(data, toNodeData) {
+    const node = new Node(data);
+    const parent = toNodeData ? this.findBFS(toNodeData) : null;
+
+    if (parent) {
+      parent.children.push(node);
+    } else {
+      if (!this.root) {
+        this.root = node;
+      } else {
+        return "error";
+      }
+    }
+  }
+
+  findBFS(data) {
+    let _node = null;
+
+    this.traverseBFS((node) => {
+      if (node.data == data) {
+        _node = node;
+      }
+    });
+    return _node;
+  }
+
+  traverseBFS(cb) {
+    const queue = [this.root];
+
+    if (cb) {
+      while (queue.length) {
+        const node = queue.shift();
+
+        cb(node);
+
+        for (const child of node.children) {
+          queue.push(child);
+        }
+      }
+    }
+  }
+}
+
+let tree = new Tree();
+tree.add("A"); 
+tree.add("B", "A"); 
+tree.add("C", "A");
+tree.add("D", "B");
+tree.add("E", "B");
+tree.traverseBFS((node) => console.log(node.toString())); 
